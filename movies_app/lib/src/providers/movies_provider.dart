@@ -12,6 +12,8 @@ class MoviesProvider {
 
   int _popularsPage = 0;
 
+  bool _charge = false;
+
   List<Movie> _populars = new List();
 
   final _popularsStremController = StreamController<List<Movie>>.broadcast();
@@ -46,6 +48,10 @@ class MoviesProvider {
 
   Future<List<Movie>> getPopular() async{
 
+    if(_charge) return[];
+
+    _charge = true;
+
     _popularsPage++;
 
     final url = Uri.https(_url, '$_apiVersion/movie/popular',{
@@ -58,6 +64,8 @@ class MoviesProvider {
 
     _populars.addAll(resp);
     popularsSink(_populars);
+
+    _charge = false;
 
     return resp;
   }
