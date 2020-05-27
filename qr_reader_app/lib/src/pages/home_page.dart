@@ -76,16 +76,16 @@ class _HomePageState extends State<HomePage> {
 
     ScanResult futureString;
 
-    try {
-      futureString = await BarcodeScanner.scan();
-    } catch(e) {
-       print('error: ${e.toString()}');
-    }
-    print('Future string: ${futureString.rawContent}');
+  //   try {
+  //     futureString = await BarcodeScanner.scan();
+  //   } catch(e) {
+  //      print('error: ${e.toString()}');
+  //   }
+  //   print('Future string: ${futureString.rawContent}');
 
-    if (futureString != null) {
-      print('tenemos información');
-    }
+  //   if (futureString != null) {
+  //     print('tenemos información');
+  //   }
   }
 
 }
