@@ -1,9 +1,14 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:qr_reader_app/src/bloc/scans_bloc.dart';
+import 'package:qr_reader_app/src/models/scan_model.dart';
 
 import 'package:qr_reader_app/src/pages/maps_page.dart';
 import 'package:qr_reader_app/src/pages/address_page.dart';
 
 import 'package:barcode_scan/barcode_scan.dart';
+import 'package:qr_reader_app/src/utils/utils.dart' as utils;
 
 class HomePage extends StatefulWidget {
   @override
@@ -11,6 +16,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final scansBloc = new ScansBloc();
+
   int currentIndex = 0;
 
   @override
@@ -19,7 +26,10 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: Text('QR Reader'),
         actions: <Widget>[
-          IconButton(icon: Icon(Icons.delete_forever), onPressed: () {})
+          IconButton(
+            icon: Icon(Icons.delete_forever),
+            onPressed: scansBloc.deleteAllScans
+          )
         ],
       ),
       body: _callPage(currentIndex),
@@ -63,29 +73,42 @@ class _HomePageState extends State<HomePage> {
   Widget _createFlotingActionButtom() {
     return FloatingActionButton(
       child: Icon(Icons.filter_center_focus),
-      onPressed: _scanQR,
+      onPressed: () => _scanQR(context),
       backgroundColor: Theme.of(context).primaryColor,
     );
   }
 
   // Muy complejo y dificil
-  _scanQR() async {
+  _scanQR(BuildContext context) async {
 
     // https://www.littlewire.dev/
     // geo:40.67529934257727,-73.94276991328128
 
-    ScanResult futureString;
+    dynamic futureString = 'https://www.littlewire.dev/';
+    
 
-  //   try {
-  //     futureString = await BarcodeScanner.scan();
-  //   } catch(e) {
-  //      print('error: ${e.toString()}');
-  //   }
-  //   print('Future string: ${futureString.rawContent}');
+    // try {
+    //   futureString = await BarcodeScanner.scan();
+    // } catch(e) {
+    //    print('error: ${e.toString()}');
+    // }
+    // print('Future string: ${futureString.rawContent}');
 
-  //   if (futureString != null) {
-  //     print('tenemos información');
-  //   }
+    if (futureString != null) {
+      final scan = ScanModel(value: futureString);
+      scansBloc.addScan(scan);
+
+      final scan2 = ScanModel(value: 'geo:40.67529934257727,-73.94276991328128');
+      scansBloc.addScan(scan2);
+
+      if (Platform.isIOS) {
+        Future.delayed(Duration(milliseconds: 750), () {
+          utils.openScan(context, scan);
+        });
+      } else {
+        utils.openScan(context, scan);
+      }
+    }
   }
 
 }

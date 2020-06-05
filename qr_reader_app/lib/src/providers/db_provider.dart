@@ -3,6 +3,7 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:qr_reader_app/src/models/scan_model.dart';
+export 'package:qr_reader_app/src/models/scan_model.dart';
 
 
 class DBProvider {
@@ -74,7 +75,7 @@ class DBProvider {
   }
 
   Future<List<ScanModel>> getAllScans() async {
-    final db = await database;
+    final db  = await database;
 
     final res = await db.query('Scans');
 
@@ -85,8 +86,8 @@ class DBProvider {
     return list;
   }
 
-    Future<List<ScanModel>> getAllScansByType(String type) async {
-    final db = await database;
+  Future<List<ScanModel>> getAllScansByType(String type) async {
+    final db  = await database;
 
     final res = await db.query('Scans', where: 'type =  ?', whereArgs: [type]);
 
@@ -96,5 +97,26 @@ class DBProvider {
 
     return list;
   }
+
+  // Update Data
+  Future<int> updateScan(ScanModel newScan) async {
+    final db  = await database;
+    final res = await db.update('Scans', newScan.toJson(), where: 'id = ?', whereArgs: [newScan.id]);
+    return res;
+  }
+
+  // Delete Data
+  Future<int> deleteScan(int id) async {
+    final db  = await database;
+    final res = await db.delete('Scans', where: 'id = ?', whereArgs: [id]);
+    return res;
+  }
+
+  Future<int> deleteAll() async {
+    final db  = await database;
+    final res = await db.delete('Scans');
+    return res;
+  }
+
 
 }
