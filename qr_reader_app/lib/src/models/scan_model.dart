@@ -1,31 +1,40 @@
+import 'package:latlong/latlong.dart';
+
 class ScanModel {
-    int id;
-    String type;
-    String value;
+  int id;
+  String type;
+  String value;
 
-    ScanModel({
-        this.id,
-        this.type,
-        this.value,
-    }){
-      if (this.value.contains('http')) {
-        this.type = 'http';
-      }else {
-        this.type = 'geo';
-      }
+  ScanModel({
+    this.id,
+    this.type,
+    this.value,
+  }) {
+    if (this.value.contains('http')) {
+      this.type = 'http';
+    } else {
+      this.type = 'geo';
     }
+  }
 
-    // El factory: es poder crear una nueva instancia del scan model
-    factory ScanModel.fromJson(Map<String, dynamic> json) => ScanModel(
-        id   : json["id"],
-        type : json["type"],
+  // El factory: es poder crear una nueva instancia del scan model
+  factory ScanModel.fromJson(Map<String, dynamic> json) => ScanModel(
+        id: json["id"],
+        type: json["type"],
         value: json["value"],
-    );
+      );
 
-
-    Map<String, dynamic> toJson() => {
-        "id"   : id,
-        "type" : type,
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "type": type,
         "value": value,
-    };
+      };
+  
+  getLatLng() {
+    final latlng = value.substring(4).split(',');
+    final lat = double.parse(latlng[0]);
+    final lng = double.parse(latlng[1]);
+    
+    return LatLng(lat, lng);
+  }
 }

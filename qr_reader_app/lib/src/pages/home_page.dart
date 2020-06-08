@@ -78,28 +78,27 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // Muy complejo y dificil
+  // Libreria con muchos problemas.
   _scanQR(BuildContext context) async {
 
     // https://www.littlewire.dev/
     // geo:40.67529934257727,-73.94276991328128
 
-    dynamic futureString = 'https://www.littlewire.dev/';
+    //dynamic futureString = 'https://www.littlewire.dev/';
+    dynamic futureString;
+
     
+    try {
+      futureString = await BarcodeScanner.scan();
+    } catch(e) {
+       print('error: ${e.toString()}');
+    }
+    print('Future string: ${futureString.rawContent}');
 
-    // try {
-    //   futureString = await BarcodeScanner.scan();
-    // } catch(e) {
-    //    print('error: ${e.toString()}');
-    // }
-    // print('Future string: ${futureString.rawContent}');
-
-    if (futureString != null) {
-      final scan = ScanModel(value: futureString);
+    if (futureString.rawContent != "") {
+      final scan = ScanModel(value: futureString.rawContent);
+      
       scansBloc.addScan(scan);
-
-      final scan2 = ScanModel(value: 'geo:40.67529934257727,-73.94276991328128');
-      scansBloc.addScan(scan2);
 
       if (Platform.isIOS) {
         Future.delayed(Duration(milliseconds: 750), () {
