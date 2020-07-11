@@ -1,23 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:sign_in_app/src/blocs/provider.dart';
 
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final bloc = Provider.of(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('Home')
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Text('Email: ${bloc.email}'),
-          Divider(),
-          Text('Password: ${bloc.password}')
-        ],
-      ),
+      body: Container(),
+      floatingActionButton: _createButton(context),
+    );
+  }
+
+  Widget _createButton(BuildContext context){
+    return FloatingActionButton(
+      child: Icon(Icons.add),
+      backgroundColor: Colors.deepPurple,
+      onPressed: () => Navigator.pushNamed(context, 'product'),
     );
   }
 }
