@@ -54,11 +54,26 @@ class _HomePageState extends State<HomePage> {
       onDismissed: (direction) {
         productsProvider.deleteProduct(product.id);
       },
-      child: ListTile(
-        title: Text('${product.title} - ${product.price}'),
-        subtitle: Text(product.id),
-        onTap: () => Navigator.pushNamed(context, 'product', arguments: product)
-          .then((value) => setState((){})),
+      child: Card(
+        child: Column(
+          children: <Widget>[
+            (product.urlImg == null)
+              ? Image(image: AssetImage('assets/no-image.png'))
+              : FadeInImage(
+                image: NetworkImage(product.urlImg),
+                placeholder: AssetImage('assets/jar-loading.gif'),
+                height: 300.0,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
+            ListTile(
+              title: Text('${product.title} - ${product.price}'),
+              subtitle: Text(product.id),
+              onTap: () => Navigator.pushNamed(context, 'product', arguments: product)
+                .then((value) => setState((){})),
+            )
+          ],
+        ),
       ),
     );
   }

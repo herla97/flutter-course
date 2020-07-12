@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -19,7 +21,7 @@ class _ProductPageState extends State<ProductPage> {
   ProductModel product = new ProductModel();
   bool _saving = false;
 
-  PickedFile photo;
+  File photo;
 
   @override
   Widget build(BuildContext context) {
@@ -130,12 +132,16 @@ class _ProductPageState extends State<ProductPage> {
     );
   }
 
-  void _submit() {
+  void _submit() async {
     if(!formKey.currentState.validate()) return;
 
     formKey.currentState.save();
 
     setState(() { _saving = true;});
+
+    if (photo != null) {
+      product.urlImg = await productProvider.uploadImage(photo);
+    }
 
     if(product.id == null){
      productProvider.createProduct(product);
@@ -159,7 +165,13 @@ class _ProductPageState extends State<ProductPage> {
 
   Widget _showPhoto() {
     if(product.urlImg != null) {
-      return Container();
+      return FadeInImage(
+        image: NetworkImage(product.urlImg),
+        placeholder: AssetImage('assets/jar-loading.gif'),
+        height: 300.0,
+        width: double.infinity,
+        fit: BoxFit.contain,
+      );
     }else{
       return Image(
         image: AssetImage(photo?.path ?? 'assets/no-image.png'),
@@ -184,14 +196,14 @@ class _ProductPageState extends State<ProductPage> {
     final pickedFile = await _picker.getImage(
       source: origin,
     );
+    
+    photo = File(pickedFile.path);
 
     if (photo != null) {
-      //clean
+      product.urlImg = null;
     }
 
-    setState(() {
-      photo = pickedFile;
-    });
+    setState(() {});
   }
 
 }
