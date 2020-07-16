@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sign_in_app/src/blocs/provider.dart';
+// import 'package:sign_in_app/src/blocs/provider.dart';
 import 'package:sign_in_app/src/models/product_model.dart';
 import 'package:sign_in_app/src/providers/products_provider.dart';
 
@@ -15,7 +15,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
 
-    final bloc  = Provider.of(context);
+    // final bloc  = Provider.of(context);
 
 
     return Scaffold(

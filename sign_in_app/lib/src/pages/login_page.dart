@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:sign_in_app/src/blocs/provider.dart';
+import 'package:sign_in_app/src/providers/users_provider.dart';
+import 'package:sign_in_app/src/utils/utils.dart' as utils;
 
 class LoginPage extends StatelessWidget {
+
+  final usersProvider = new UsersProvider();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -179,10 +184,13 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  _login(BuildContext context, LoginBloc bloc, ) {
-    print('Email: ${bloc.email}');
-    print('Password: ${bloc.password}');
+  _login(BuildContext context, LoginBloc bloc, ) async {
+    Map info = await usersProvider.login(bloc.email, bloc.password);
 
-    Navigator.pushReplacementNamed(context, 'home');
+    if (info['ok']) {
+      Navigator.pushReplacementNamed(context, 'home');
+    } else {
+      utils.showAlert(context, info['message']);
+    }
   }
 }

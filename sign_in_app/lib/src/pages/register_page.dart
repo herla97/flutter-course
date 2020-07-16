@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sign_in_app/src/blocs/provider.dart';
 import 'package:sign_in_app/src/providers/users_provider.dart';
+import 'package:sign_in_app/src/utils/utils.dart' as utils;
 
 class RegisterPage extends StatelessWidget {
 
@@ -183,8 +184,13 @@ class RegisterPage extends StatelessWidget {
     );
   }
 
-  _register(BuildContext context, LoginBloc bloc, ) {
-    usersProvider.newUser(bloc.email, bloc.password);
-    // Navigator.pushReplacementNamed(context, 'home');
+  _register(BuildContext context, LoginBloc bloc, ) async {
+    final info = await usersProvider.newUser(bloc.email, bloc.password);
+
+    if (info['ok']) {
+      Navigator.pushReplacementNamed(context, 'home');
+    } else {
+      utils.showAlert(context, info['message']);
+    }
   }
 }

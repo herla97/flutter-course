@@ -4,12 +4,24 @@ import 'package:sign_in_app/src/pages/home_page.dart';
 import 'package:sign_in_app/src/pages/login_page.dart';
 import 'package:sign_in_app/src/pages/product_page.dart';
 import 'package:sign_in_app/src/pages/register_page.dart';
+import 'package:sign_in_app/src/user_preferences/user_preferences.dart';
 
-void main() => runApp(MyApp());
+void main() async {
+
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final prefs = new UserPreferences();
+  await prefs.initPrefs();
+
+  runApp(MyApp());
+
+}
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final prefs = new UserPreferences();
+    print(prefs.token);
     return Provider(
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
