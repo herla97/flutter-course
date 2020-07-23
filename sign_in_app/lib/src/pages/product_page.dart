@@ -2,22 +2,20 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-
+import 'package:sign_in_app/src/blocs/provider.dart';
 import 'package:sign_in_app/src/utils/utils.dart' as utils;
 import 'package:sign_in_app/src/models/product_model.dart';
-import 'package:sign_in_app/src/providers/products_provider.dart';
 
 class ProductPage extends StatefulWidget {
-
   @override
   _ProductPageState createState() => _ProductPageState();
 }
 
 class _ProductPageState extends State<ProductPage> {
-  final formKey     = GlobalKey<FormState>();
+  final formKey = GlobalKey<FormState>();
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  final productProvider = new ProductsProvider();
 
+  ProductsBloc productsBloc;
   ProductModel product = new ProductModel();
   bool _saving = false;
 
@@ -25,9 +23,9 @@ class _ProductPageState extends State<ProductPage> {
 
   @override
   Widget build(BuildContext context) {
-
+    productsBloc = Provider.productsBloc(context);
     final ProductModel prodArg = ModalRoute.of(context).settings.arguments;
-    if(prodArg != null ) {
+    if (prodArg != null) {
       product = prodArg;
     }
     return Scaffold(
@@ -69,10 +67,8 @@ class _ProductPageState extends State<ProductPage> {
     return TextFormField(
       initialValue: product.title,
       textCapitalization: TextCapitalization.sentences,
-      decoration: InputDecoration(
-        labelText: 'Product'
-      ),
-       onSaved: (value) => product.title = value,
+      decoration: InputDecoration(labelText: 'Product'),
+      onSaved: (value) => product.title = value,
       // validator: (value) {
       //   if (value.length < 3) {
       //     return 'Ingrese el nombre del producto'
@@ -80,9 +76,7 @@ class _ProductPageState extends State<ProductPage> {
       //     return null
       //   }
       // },
-      validator: (value) => value.length < 3 
-        ? 'Insert product name' 
-        : null,
+      validator: (value) => value.length < 3 ? 'Insert product name' : null,
     );
   }
 
@@ -90,9 +84,7 @@ class _ProductPageState extends State<ProductPage> {
     return TextFormField(
       initialValue: product.price.toString(),
       keyboardType: TextInputType.numberWithOptions(decimal: true),
-      decoration: InputDecoration(
-        labelText: 'Price'
-      ),
+      decoration: InputDecoration(labelText: 'Price'),
       onSaved: (value) => product.price = double.parse(value),
       // validator: (value) {
       //   if (utils.isNumeric(value)) {
@@ -101,29 +93,23 @@ class _ProductPageState extends State<ProductPage> {
       //     return 'Only numbers';
       //   }
       // },
-      validator: (value) => utils.isNumeric(value)
-        ? null
-        : 'Only numbers',
+      validator: (value) => utils.isNumeric(value) ? null : 'Only numbers',
     );
   }
 
   Widget _createAvailable() {
     return SwitchListTile(
-      value: product.available,
-      title: Text('Available'),
-      activeColor: Colors.deepPurple,
-      onChanged: (value) => setState(() {
-        product.available = value;
-      })
-    );
+        value: product.available,
+        title: Text('Available'),
+        activeColor: Colors.deepPurple,
+        onChanged: (value) => setState(() {
+              product.available = value;
+            }));
   }
-
 
   Widget _createButton() {
     return RaisedButton.icon(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20.0)
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
       color: Colors.deepPurple,
       textColor: Colors.white,
       icon: Icon(Icons.save),
@@ -133,20 +119,22 @@ class _ProductPageState extends State<ProductPage> {
   }
 
   void _submit() async {
-    if(!formKey.currentState.validate()) return;
+    if (!formKey.currentState.validate()) return;
 
     formKey.currentState.save();
 
-    setState(() { _saving = true;});
+    setState(() {
+      _saving = true;
+    });
 
     if (photo != null) {
-      product.urlImg = await productProvider.uploadImage(photo);
+      product.urlImg = await productsBloc.uploadImage(photo);
     }
 
-    if(product.id == null){
-     productProvider.createProduct(product);
-    }else{
-      productProvider.editProduct(product);
+    if (product.id == null) {
+      productsBloc.addProduct(product);
+    } else {
+      productsBloc.editProduct(product);
     }
 
     // setState(() { _saving = false; });
@@ -164,7 +152,7 @@ class _ProductPageState extends State<ProductPage> {
   }
 
   Widget _showPhoto() {
-    if(product.urlImg != null) {
+    if (product.urlImg != null) {
       return FadeInImage(
         image: NetworkImage(product.urlImg),
         placeholder: AssetImage('assets/jar-loading.gif'),
@@ -172,7 +160,7 @@ class _ProductPageState extends State<ProductPage> {
         width: double.infinity,
         fit: BoxFit.contain,
       );
-    }else{
+    } else {
       return Image(
         image: AssetImage(photo?.path ?? 'assets/no-image.png'),
         height: 300.0,
@@ -180,7 +168,6 @@ class _ProductPageState extends State<ProductPage> {
       );
     }
   }
-
 
   _selectPhoto() {
     _processImage(ImageSource.gallery);
@@ -196,7 +183,7 @@ class _ProductPageState extends State<ProductPage> {
     final pickedFile = await _picker.getImage(
       source: origin,
     );
-    
+
     photo = File(pickedFile.path);
 
     if (photo != null) {
@@ -205,5 +192,4 @@ class _ProductPageState extends State<ProductPage> {
 
     setState(() {});
   }
-
 }

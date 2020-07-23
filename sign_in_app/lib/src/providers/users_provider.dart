@@ -3,7 +3,6 @@ import 'package:http/http.dart' as http;
 import 'package:sign_in_app/src/user_preferences/user_preferences.dart';
 
 class UsersProvider {
-
   String _firebaseToken = 'AIzaSyDjxJ9zAII-QEPU4tdA1B7g9tI0HsCESQk';
   final _prefs = new UserPreferences();
 
@@ -15,16 +14,14 @@ class UsersProvider {
     };
 
     final resp = await http.post(
-      'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=$_firebaseToken',
-      body: json.encode(authData)
-    );
+        'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=$_firebaseToken',
+        body: json.encode(authData));
 
     Map<String, dynamic> decodedResp = json.decode(resp.body);
 
     print(decodedResp);
 
     if (decodedResp.containsKey('idToken')) {
-      // TODO: Save token on storage.
       _prefs.token = decodedResp['idToken'];
 
       return {'ok': true, 'token': decodedResp['idToken']};
@@ -33,7 +30,6 @@ class UsersProvider {
     }
   }
 
-  
   Future<Map<String, dynamic>> newUser(String email, String password) async {
     final authData = {
       'email': email,
@@ -42,16 +38,14 @@ class UsersProvider {
     };
 
     final resp = await http.post(
-      'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=$_firebaseToken',
-      body: json.encode(authData)
-    );
+        'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=$_firebaseToken',
+        body: json.encode(authData));
 
     Map<String, dynamic> decodedResp = json.decode(resp.body);
 
     print(decodedResp);
 
     if (decodedResp.containsKey('idToken')) {
-      // TODO: Save token on storage.
       _prefs.token = decodedResp['idToken'];
 
       return {'ok': true, 'token': decodedResp['idToken']};
